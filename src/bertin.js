@@ -1,15 +1,14 @@
 import { sum } from "d3-array";
 import {geoProjection as projection} from "d3-geo";
 import {hammerRaw} from "./hammer.js";
-import {cos, pi, sin} from "./math.js";
 import {solve2d} from "./newton.js";
 
 // Bertin 1953 as a modified Briesemeister
 // https://bl.ocks.org/Fil/5b9ee9636dfb6ffa53443c9006beb642
 export function bertin1953Raw() {
   var hammer = hammerRaw(1.68, 2);
-  var xijs = [(1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9)];
-  var yijs = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9), (0, 10)];
+  var xijs = [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7], [1, 8], [3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [5, 0], [5, 1], [5, 2], [5, 3], [5, 4], [7, 0], [7, 1], [7, 2], [9, 0]];
+  var yijs = [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [0, 5], [0, 6], [0, 7], [0, 8], [0, 9], [2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5], [6, 0], [6, 1], [6, 2], [6, 3], [8, 0], [8, 1]];
   var C = [ [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
             [0.5963281974814849,0.017274974591818815,0.11905342599814848,0.06791577862129425,-0.47991070279323705,-0.02903494222245918,0.5161250171931101,0.010324885156031083,-0.1339286293826542,0.0],
             [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
@@ -35,13 +34,13 @@ export function bertin1953Raw() {
 
   function hammerBaseTerm(lambda, phi, i, j) {
     var r = hammer(lambda, phi);
-    return (r[0]**i * r[1]**j);
+    return r[0]**i * r[1]**j;
   }
 
   function forward(lambda, phi) {
     return [
-      sum(xijs.map((i, j) => C[i][j] * hammerBaseTerm(lambda, phi, i, j))),
-      sum(yijs.map((i, j) => Cp[i][j] * hammerBaseTerm(lambda, phi, i, j)))
+      xijs.map(ij => C[ij[0]][ij[1]] * hammerBaseTerm(lambda, phi, ij[0], ij[1])).reduce((a, b) => a+b),
+      yijs.map(ij => Cp[ij[0]][ij[1]] * hammerBaseTerm(lambda, phi, ij[0], ij[1])).reduce((a, b) => a+b)
     ];
   }
 
