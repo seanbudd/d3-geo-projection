@@ -40,8 +40,8 @@ export function bertin1953Raw() {
 
   function forward(lambda, phi) {
     return [
-      xijs.map((i, j) => C[i][j] * hammerBaseTerm(lambda, phi, i, j)),
-      yijs.map((i, j) => Cp[i][j] * hammerBaseTerm(lambda, phi, i, j))
+      sum(xijs.map((i, j) => C[i][j] * hammerBaseTerm(lambda, phi, i, j))),
+      sum(yijs.map((i, j) => Cp[i][j] * hammerBaseTerm(lambda, phi, i, j)))
     ];
   }
 
